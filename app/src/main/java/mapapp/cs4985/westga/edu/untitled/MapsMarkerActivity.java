@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class MapsMarkerActivity extends AppCompatActivity
             lat = location.getLatitude();
             lon = location.getLongitude();
         }
+        
         mapFragment.getMapAsync(this);
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -140,5 +142,18 @@ public class MapsMarkerActivity extends AppCompatActivity
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    /**
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + 10000);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + "YOUR_KEY_HERE");
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return (googlePlacesUrl.toString());
+    }**/
+    //"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=33.575,-85.098&radius=10000&type=food&sensor=true&key=YOUR_KEY_HERE";
 
 }
