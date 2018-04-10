@@ -61,7 +61,7 @@ public class MapsMarkerActivity extends AppCompatActivity
             lat = location.getLatitude();
             lon = location.getLongitude();
         }
-        
+
         mapFragment.getMapAsync(this);
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -147,13 +147,13 @@ public class MapsMarkerActivity extends AppCompatActivity
 
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
-        googlePlacesUrl.append("&radius=" + 10000);
-        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&radius=" + 5000);
+        googlePlacesUrl.append("&keyword=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
         googlePlacesUrl.append("&key=" + "YOUR_KEY_HERE");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }**/
-    //"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=33.575,-85.098&radius=10000&type=food&sensor=true&key=YOUR_KEY_HERE";
+    //"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=33.575,-85.098&radius=5000&keyword=food&sensor=true&key=YOUR_KEY_HERE"
 
 }
