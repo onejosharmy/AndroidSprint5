@@ -41,13 +41,13 @@ public class MarkerTask extends AsyncTask<Void, Void, String> {
                 json.append(buff, 0, read);
             }
         } catch (IOException e) {
+            System.out.print("JSON parsing error");
             //throw new IOException("Error connecting to service", e); //uncaught
         } finally {
             if (conn != null) {
                 conn.disconnect();
             }
         }
-
         return json.toString();
     }
 
