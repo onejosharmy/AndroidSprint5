@@ -49,7 +49,7 @@ public class MapsMarkerActivity extends ListActivity
     int REQUEST_PLACE_PICKER = 1;
     Handler handler;
     ThreadFetcher fetcher;
-    TextView textview;
+    //TextView textview;
     ListView listview;
     EntryAdapter adapter;
     EditText input;
@@ -78,7 +78,7 @@ public class MapsMarkerActivity extends ListActivity
             lon = location.getLongitude();
         }
 
-        textview = (TextView) findViewById(R.id.textview);
+        //textview = (TextView) findViewById(R.id.textview);
         listview = (ListView) findViewById(android.R.id.list);
         input = (EditText) findViewById(R.id.editText);
         ImageView img = (ImageView) findViewById(R.id.button);
@@ -90,7 +90,7 @@ public class MapsMarkerActivity extends ListActivity
                 fetcher = new ThreadFetcher(searchURL);
                 fetcher.start();
                 listview.setAdapter(null);
-                textview.setText("retrieving");
+                //textview.setText("retrieving");
                 handler = new Handler();
                 handler.post(checkFetcher);
             }
@@ -114,13 +114,13 @@ public class MapsMarkerActivity extends ListActivity
         public void run() {
             if (fetcher.isFinished()) {
                 if (fetcher.successful()) {
-                    textview.setText("");
+                    //textview.setText("");
                     JSONParser parser = new JSONParser(fetcher.getResult());
                     System.out.println(fetcher.getResult());
                     List<Entry> listy = parser.forecastEntryList();
                     displayEntries(listy);
                 } else {
-                    textview.setText(("failed"));
+                    //textview.setText(("failed"));
                     listview.setAdapter(null);
                 }
 
@@ -129,7 +129,7 @@ public class MapsMarkerActivity extends ListActivity
                 if (count < TIMEOUT) {
                     handler.postDelayed(checkFetcher, 1000);
                 } else {
-                    textview.setText("No Network connection");
+                    //textview.setText("No Network connection");
                     listview.setAdapter(null);
                 }
             }
