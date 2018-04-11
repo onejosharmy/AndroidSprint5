@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MarkerTask extends AsyncTask<Void, Void, String> {
-    private static final String SERVICE_URL = "AIzaSyAur5sNgpt2bxCixYQZc0a62YwNkgnvx6Y";
+    private static final String SERVICE_URL = "YOUR_KEY_HERE";
     protected GoogleMap map;
 
     // Invoked by execute() method of this object

@@ -47,6 +47,7 @@ public class MapsMarkerActivity extends ListActivity
     double lat = 33.575;
     double lon = -85.098;
     int REQUEST_PLACE_PICKER = 1;
+    AdapterView.AdapterContextMenuInfo menuinfo = null;
     Handler handler;
     ThreadFetcher fetcher;
     //TextView textview;
@@ -79,6 +80,7 @@ public class MapsMarkerActivity extends ListActivity
             lon = location.getLongitude();
         }
 
+
         //textview = (TextView) findViewById(R.id.textview);
         listview = (ListView) findViewById(android.R.id.list);
         input = (EditText) findViewById(R.id.editText);
@@ -100,13 +102,13 @@ public class MapsMarkerActivity extends ListActivity
 
 
         //$mapFragment.getMapAsync(this);
-        int PLACE_PICKER_REQUEST = 1;
+        /**int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         try {
             startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
         } catch (Exception e){
             System.out.println("something went wrong");
-        }
+        }**/
 
     }
 
@@ -124,11 +126,13 @@ public class MapsMarkerActivity extends ListActivity
                     listForView = listy;
                 } else {
                     //textview.setText(("failed"));
+                    System.out.println("fail");
                     listview.setAdapter(null);
                     listForView = null;
                 }
 
             } else {
+                System.out.println("fetching");
                 count++;
                 if (count < TIMEOUT) {
                     handler.postDelayed(checkFetcher, 1000);
@@ -158,16 +162,17 @@ public class MapsMarkerActivity extends ListActivity
      * Play services inside the SupportMapFragment. The API invokes this method after the user has
      * installed Google Play services and returned to the app.
      */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
         //LatLng sydney = new LatLng(-33.852, 151.211);
-        LatLng current = new LatLng(lat,lon);
-        googleMap.addMarker(new MarkerOptions().position(current).title("Marker at current location"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+        //LatLng current = new LatLng(lat,lon);
+        //googleMap.addMarker(new MarkerOptions().position(current).title("Marker at current location"));
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLng(current));
     }
-
+/**
     public void onPickButtonClick(View v) {
         // Construct an intent for the place picker
         try {
@@ -184,7 +189,7 @@ public class MapsMarkerActivity extends ListActivity
             // ...
         }
     }
-
+**//**
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode, Intent data) {
@@ -209,7 +214,7 @@ public class MapsMarkerActivity extends ListActivity
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-     }
+     }**/
     private String getUrl(double latitude, double longitude, String nearbyPlace) {
 
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
@@ -217,7 +222,7 @@ public class MapsMarkerActivity extends ListActivity
         googlePlacesUrl.append("&radius=" + 5000);
         googlePlacesUrl.append("&keyword=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyAur5sNgpt2bxCixYQZc0a62YwNkgnvx6Y");
+        googlePlacesUrl.append("&key=" + "YOUR_KEY_HERE");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
@@ -227,8 +232,6 @@ public class MapsMarkerActivity extends ListActivity
         adapter = new EntryAdapter(MapsMarkerActivity.this, R.layout.list_search, forecasts);
         setListAdapter(adapter);
     }
-
-    AdapterView.AdapterContextMenuInfo menuinfo = null;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
