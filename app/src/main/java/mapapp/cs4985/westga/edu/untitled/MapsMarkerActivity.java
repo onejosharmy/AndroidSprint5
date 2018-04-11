@@ -14,9 +14,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -45,6 +52,7 @@ public class MapsMarkerActivity extends ListActivity
     TextView textview;
     ListView listview;
     EntryAdapter adapter;
+    EditText input;
     final int TIMEOUT = 240;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +77,25 @@ public class MapsMarkerActivity extends ListActivity
             lat = location.getLatitude();
             lon = location.getLongitude();
         }
-        String searchURL = this.getUrl(lat,lon,"steak");
-        String forecastURL = "https://api.weather.gov/points/" + lat + "," + lon + "/forecast";
+
         textview = (TextView) findViewById(R.id.textview);
         listview = (ListView) findViewById(android.R.id.list);
-        fetcher = new ThreadFetcher(searchURL);
-        fetcher.start();
-        textview.setText("retrieving");
-        handler = new Handler();
-        handler.post(checkFetcher);
+        input = (EditText) findViewById(R.id.editText);
+        ImageView img = (ImageView) findViewById(R.id.button);
+        img.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String inputText = input.getText().toString();
+                System.out.println(inputText);
+                String searchURL = getUrl(lat,lon,inputText);
+                fetcher = new ThreadFetcher(searchURL);
+                fetcher.start();
+                listview.setAdapter(null);
+                textview.setText("retrieving");
+                handler = new Handler();
+                handler.post(checkFetcher);
+            }
+        });
+
 
         //$mapFragment.getMapAsync(this);
         int PLACE_PICKER_REQUEST = 1;
@@ -205,4 +223,56 @@ public class MapsMarkerActivity extends ListActivity
         adapter = new EntryAdapter(MapsMarkerActivity.this, R.layout.list_search, forecasts);
         setListAdapter(adapter);
     }
+    /**registerForContextMenu(lv_myhitshotlists);
+    AdapterContextMenuInfo menuinfo = null;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        /*menu.setHeaderTitle("Item Operations");
+        menu.add(0, v.getId(), 0, "Edit Film");
+        menu.add(0, v.getId(), 0, "Delete Film");
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_myfilm_list,menu);
+        menuinfo = (AdapterContextMenuInfo) menuInfo;
+        menu.setHeaderTitle("Options");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        try{
+            menuinfo = (AdapterContextMenuInfo) item.getMenuInfo();
+            AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Long ids = madapter.getItemId(info.position);//what item was selected is ListView
+            i = ids.intValue();
+
+            switch (item.getItemId()) {
+
+                case R.id.menu_edit_myfilm:
+
+                    intHitshotEdit = new Intent(MyHitshotListActivity.this,MyHitshotInfoEditActivity.class);
+                    intHitshotEdit.putExtra("video_id", myList.get(i).getid());
+                    intHitshotEdit.putExtra("video_title", myList.get(i).getTitle());
+                    Toast.makeText(getApplicationContext(),myList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
+                    //intVideodetails.putExtra("video_desc", myList.get(i).get);
+                    startActivity(intHitshotEdit);
+                    overridePendingTransition(R.anim.slideinfromright,R.anim.slideouttoleft);
+                    //intVideoUpload.putExtra("title",""+info.);
+
+                    return true;
+
+                case R.id.menu_delete_myfilm:
+
+                    return true;
+
+                default:
+
+            }
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return super.onContextItemSelected(item);
+    }**/
 }
