@@ -51,6 +51,7 @@ public class MapsMarkerActivity extends ListActivity
     ThreadFetcher fetcher;
     //TextView textview;
     ListView listview;
+    List<Entry> listForView;
     EntryAdapter adapter;
     EditText input;
     final int TIMEOUT = 240;
@@ -95,6 +96,7 @@ public class MapsMarkerActivity extends ListActivity
                 handler.post(checkFetcher);
             }
         });
+        registerForContextMenu(listview);
 
 
         //$mapFragment.getMapAsync(this);
@@ -119,9 +121,11 @@ public class MapsMarkerActivity extends ListActivity
                     System.out.println(fetcher.getResult());
                     List<Entry> listy = parser.forecastEntryList();
                     displayEntries(listy);
+                    listForView = listy;
                 } else {
                     //textview.setText(("failed"));
                     listview.setAdapter(null);
+                    listForView = null;
                 }
 
             } else {
@@ -223,50 +227,37 @@ public class MapsMarkerActivity extends ListActivity
         adapter = new EntryAdapter(MapsMarkerActivity.this, R.layout.list_search, forecasts);
         setListAdapter(adapter);
     }
-    /**registerForContextMenu(lv_myhitshotlists);
-    AdapterContextMenuInfo menuinfo = null;
+
+    AdapterView.AdapterContextMenuInfo menuinfo = null;
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        /*menu.setHeaderTitle("Item Operations");
-        menu.add(0, v.getId(), 0, "Edit Film");
-        menu.add(0, v.getId(), 0, "Delete Film");
+        menu.setHeaderTitle("Item Operations");
 
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.context_myfilm_list,menu);
-        menuinfo = (AdapterContextMenuInfo) menuInfo;
+
+        inflater.inflate(R.layout.list_menu,menu);
+        menuinfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
         menu.setHeaderTitle("Options");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         try{
-            menuinfo = (AdapterContextMenuInfo) item.getMenuInfo();
+            menuinfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Long ids = madapter.getItemId(info.position);//what item was selected is ListView
-            i = ids.intValue();
+            Long ids = adapter.getItemId(info.position);//what item was selected is ListView
+            int i = ids.intValue();
 
             switch (item.getItemId()) {
 
-                case R.id.menu_edit_myfilm:
+                case R.id.delete_item:
 
-                    intHitshotEdit = new Intent(MyHitshotListActivity.this,MyHitshotInfoEditActivity.class);
-                    intHitshotEdit.putExtra("video_id", myList.get(i).getid());
-                    intHitshotEdit.putExtra("video_title", myList.get(i).getTitle());
-                    Toast.makeText(getApplicationContext(),myList.get(i).getTitle(), Toast.LENGTH_SHORT).show();
-                    //intVideodetails.putExtra("video_desc", myList.get(i).get);
-                    startActivity(intHitshotEdit);
-                    overridePendingTransition(R.anim.slideinfromright,R.anim.slideouttoleft);
-                    //intVideoUpload.putExtra("title",""+info.);
-
+                    listForView.remove(i);
+                    displayEntries(listForView);
                     return true;
 
-                case R.id.menu_delete_myfilm:
-
-                    return true;
-
-                default:
 
             }
         }catch(Exception e)
@@ -274,5 +265,5 @@ public class MapsMarkerActivity extends ListActivity
             e.printStackTrace();
         }
         return super.onContextItemSelected(item);
-    }**/
+    }
 }
