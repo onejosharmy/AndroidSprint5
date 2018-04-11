@@ -29,10 +29,10 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
     public View getView(int position, View view, ViewGroup parent) {
 
         LayoutInflater inflater = LayoutInflater.from(this.context);
-        View entryView = inflater.inflate(R.layout.list_search, parent, false);
+        View entryView = inflater.inflate(R.layout.entry_view, parent, false);
         Entry entry = this.list.get(position);
 
-        TextView text = entryView.findViewById(R.id.textview);
+        TextView text = entryView.findViewById(R.id.textviewname);
         text.setText(entry.getName());
 
         return entryView;
