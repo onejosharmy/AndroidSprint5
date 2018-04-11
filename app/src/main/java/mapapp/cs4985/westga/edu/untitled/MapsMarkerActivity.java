@@ -2,16 +2,21 @@ package mapapp.cs4985.westga.edu.untitled;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -24,24 +29,33 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * An activity that displays a Google map with a marker (pin) to indicate a particular location.
  */
-public class MapsMarkerActivity extends AppCompatActivity
+public class MapsMarkerActivity extends ListActivity
         implements OnMapReadyCallback {
     double lat = 33.575;
     double lon = -85.098;
     int REQUEST_PLACE_PICKER = 1;
-
+    Handler handler;
+    ThreadFetcher fetcher;
+    TextView textview;
+    ListView listview;
+    EntryAdapter adapter;
+    final int TIMEOUT = 240;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Retrieve the content view that renders the map.
-        setContentView(R.layout.activity_maps);
+        //$setContentView(R.layout.activity_maps);
+        setContentView(R.layout.list_search);
         // Get the SupportMapFragment and request notification
         // when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        //$SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        //$        .findFragmentById(R.id.map);
         permissionRequester(Manifest.permission.ACCESS_FINE_LOCATION);
         permissionRequester(Manifest.permission.INTERNET);
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -55,8 +69,17 @@ public class MapsMarkerActivity extends AppCompatActivity
             lat = location.getLatitude();
             lon = location.getLongitude();
         }
+        String searchURL = this.getUrl(lat,lon,"steak");
+        String forecastURL = "https://api.weather.gov/points/" + lat + "," + lon + "/forecast";
+        textview = (TextView) findViewById(R.id.textview);
+        listview = (ListView) findViewById(android.R.id.list);
+        fetcher = new ThreadFetcher(searchURL);
+        fetcher.start();
+        textview.setText("retrieving");
+        handler = new Handler();
+        handler.post(checkFetcher);
 
-        mapFragment.getMapAsync(this);
+        //$mapFragment.getMapAsync(this);
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         try {
@@ -64,7 +87,36 @@ public class MapsMarkerActivity extends AppCompatActivity
         } catch (Exception e){
             System.out.println("something went wrong");
         }
+
     }
+
+    Runnable checkFetcher = new Runnable() {
+        int count = 0;
+
+        public void run() {
+            if (fetcher.isFinished()) {
+                if (fetcher.successful()) {
+                    textview.setText("");
+                    JSONParser parser = new JSONParser(fetcher.getResult());
+                    System.out.println(fetcher.getResult());
+                    List<Entry> listy = parser.forecastEntryList();
+                    displayEntries(listy);
+                } else {
+                    textview.setText(("failed"));
+                    listview.setAdapter(null);
+                }
+
+            } else {
+                count++;
+                if (count < TIMEOUT) {
+                    handler.postDelayed(checkFetcher, 1000);
+                } else {
+                    textview.setText("No Network connection");
+                    listview.setAdapter(null);
+                }
+            }
+        }
+    };
 
     private void permissionRequester(String resource) {
 
@@ -135,8 +187,7 @@ public class MapsMarkerActivity extends AppCompatActivity
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-    /**
+     }
     private String getUrl(double latitude, double longitude, String nearbyPlace) {
 
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
@@ -144,10 +195,14 @@ public class MapsMarkerActivity extends AppCompatActivity
         googlePlacesUrl.append("&radius=" + 5000);
         googlePlacesUrl.append("&keyword=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "YOUR_KEY_HERE");
+        googlePlacesUrl.append("&key=" + "AIzaSyAur5sNgpt2bxCixYQZc0a62YwNkgnvx6Y");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
-    }**/
+    }
     //"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=33.575,-85.098&radius=5000&keyword=food&sensor=true&key=YOUR_KEY_HERE"
 
+    private void displayEntries(List<Entry> forecasts) {
+        adapter = new EntryAdapter(MapsMarkerActivity.this, R.layout.list_search, forecasts);
+        setListAdapter(adapter);
+    }
 }

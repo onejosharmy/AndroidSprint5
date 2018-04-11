@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MarkerTask extends AsyncTask<Void, Void, String> {
-    private static final String SERVICE_URL = "OUR_JSON_API";
+    private static final String SERVICE_URL = "AIzaSyAur5sNgpt2bxCixYQZc0a62YwNkgnvx6Y";
     protected GoogleMap map;
 
     // Invoked by execute() method of this object
@@ -63,7 +63,9 @@ public class MarkerTask extends AsyncTask<Void, Void, String> {
 
                 LatLng latLng = new LatLng(jsonObj.getJSONArray("latlng").getDouble(0),
                         jsonObj.getJSONArray("latlng").getDouble(1));
-
+                System.out.println(latLng.toString());
+                String name = jsonObj.getJSONArray("results").get(3).toString();
+                System.out.println(name);
                 //move CameraPosition on first result
                 if (i == 0) {
                     CameraPosition cameraPosition = new CameraPosition.Builder()

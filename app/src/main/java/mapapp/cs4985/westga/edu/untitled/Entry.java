@@ -7,6 +7,10 @@ public class Entry {
     private String detailedForecast;
     private String temperature;
     private String imageResource;
+    private double lat;
+    private double lon;
+    private double rating;
+    private Boolean isOpen;
 
 
     public Entry(String name, String shortForescast, String detailedForcast, String temperature, String imageResource) {
@@ -17,14 +21,17 @@ public class Entry {
         this.imageResource = imageResource;
     }
 
+    public Entry(String name, double lat, double lon) {
+        this.name = name;
+        this.lat = lat;
+        this.lon = lon;
+
+    }
+
     public String getName(){ return this.name; }
 
-    public String getShortForecast(){ return this.shortForecast; }
+    public double getLat(){ return this.lat; }
 
-    public String getDetailedForecast() { return this.detailedForecast; }
-
-    public String getTemperature() { return this.temperature; }
-
-    public String getImageResource() { return this.imageResource; }
+    public double getLon(){ return this.lon; }
 }
 
