@@ -85,6 +85,7 @@ public class MapsMarkerActivity extends ListActivity
         listview = (ListView) findViewById(android.R.id.list);
         input = (EditText) findViewById(R.id.editText);
         ImageView img = (ImageView) findViewById(R.id.button);
+        new MarkerTask().execute();
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String inputText = input.getText().toString();
