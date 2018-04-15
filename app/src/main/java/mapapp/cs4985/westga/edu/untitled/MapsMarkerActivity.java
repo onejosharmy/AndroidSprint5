@@ -1,6 +1,7 @@
 package mapapp.cs4985.westga.edu.untitled;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -23,22 +24,20 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import java.util.List;
 
-/**
- * An activity that displays a Google map with a marker (pin) to indicate a particular location.
- */
 public class MapsMarkerActivity extends ListActivity
         implements OnMapReadyCallback, AsyncResponse {
     double lat = 33.575;
     double lon = -85.098;
-    int REQUEST_PLACE_PICKER = 1;
+    //int REQUEST_PLACE_PICKER = 1;
+    MarkerTask markerTask = new MarkerTask();
     AdapterView.AdapterContextMenuInfo menuinfo = null;
-    Handler handler;
-    ThreadFetcher fetcher;
+    //Handler handler;
+    //ThreadFetcher fetcher;
     ListView listview;
     List<Entry> listForView;
     EntryAdapter adapter;
     EditText input;
-    final int TIMEOUT = 240;
+    //final int TIMEOUT = 240;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +63,41 @@ public class MapsMarkerActivity extends ListActivity
         listview = (ListView) findViewById(android.R.id.list);
         input = (EditText) findViewById(R.id.editText);
         ImageView img = (ImageView) findViewById(R.id.button);
-        new MarkerTask().execute();
+
+        this.markerTask.delegate = this;
+        String inputText = input.getText().toString();
+        this.markerTask.execute(getUrl(lat, lon, inputText));
+
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String inputText = input.getText().toString();
                 System.out.println(inputText);
                 String searchURL = getUrl(lat, lon, inputText);
-                fetcher = new ThreadFetcher(searchURL);
-                fetcher.start();
+                //fetcher = new ThreadFetcher(searchURL);
+                //fetcher.start();
                 listview.setAdapter(null);
-                handler = new Handler();
-                handler.post(checkFetcher);
+                //handler = new Handler();
+                //handler.post(checkFetcher);
             }
         });
+
+        displayEntries(this.markerTask.getListy());
+        listForView = this.markerTask.getListy();
+
         registerForContextMenu(listview);
     }
 
+    @Override
+    public void processFinish(String output) {
+
+        JSONParser parser = new JSONParser(output);
+        //System.out.println(fetcher.getResult());
+        List<Entry> listy = parser.forecastEntryList();
+        displayEntries(listy);
+        listForView = listy;
+    }
+
+/**
     Runnable checkFetcher = new Runnable() {
         int count = 0;
 
@@ -108,7 +126,7 @@ public class MapsMarkerActivity extends ListActivity
             }
         }
     };
-
+**/
     private void permissionRequester(String resource) {
 
         int result = ContextCompat.checkSelfPermission(this, resource);
@@ -121,8 +139,7 @@ public class MapsMarkerActivity extends ListActivity
     /**
      * Manipulates the map when it's available.
      * The API invokes this callback when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user receives a prompt to install
      * Play services inside the SupportMapFragment. The API invokes this method after the user has
      * installed Google Play services and returned to the app.
@@ -150,6 +167,7 @@ public class MapsMarkerActivity extends ListActivity
         setListAdapter(adapter);
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -180,9 +198,5 @@ public class MapsMarkerActivity extends ListActivity
             e.printStackTrace();
         }
         return super.onContextItemSelected(item);
-    }
-
-    @Override
-    public void processFinish(String output) {
     }
 }

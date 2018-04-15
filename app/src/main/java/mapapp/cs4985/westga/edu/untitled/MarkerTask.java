@@ -2,6 +2,9 @@ package mapapp.cs4985.westga.edu.untitled;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.google.android.gms.maps.GoogleMap;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,24 +12,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-public class MarkerTask extends AsyncTask<Void, Void, String> {
+public class MarkerTask extends AsyncTask<String, Void, String> {
     private static final String SERVICE_URL = "AIzaSyAur5sNgpt2bxCixYQZc0a62YwNkgnvx6Y";
-    private AsyncResponse delegate = null;
+    public AsyncResponse delegate = null;
     protected GoogleMap map;
-    double lat = 33.575;
-    double lon = -85.098;
+    private double lat = 33.575;
+    private double lon = -85.098;
     private List<Entry> listy;
 
 
     // Invoked by execute() method of this object
     @Override
-    protected String doInBackground(Void... args) {
+    protected String doInBackground(String... args) {
         System.out.println("doing");
         HttpURLConnection conn = null;
         final StringBuilder json = new StringBuilder();
         try {
             // Connect to the web service
-            URL url = new URL(getUrl());
+            URL url = new URL(args.toString());
             conn = (HttpURLConnection) url.openConnection();
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
 
@@ -47,7 +50,7 @@ public class MarkerTask extends AsyncTask<Void, Void, String> {
         return json.toString();
     }
 
-    public List<Entry> onPostExecute() {
+    public List<Entry> getListy() {
         return listy;
     }
 
@@ -55,10 +58,10 @@ public class MarkerTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String json) {
 
-        JSONParser parser = new JSONParser(json);
-        listy = parser.forecastEntryList();
-        System.out.println(listy.size() + "---------");
-        delegate.processFinish(json);
+        //JSONParser parser = new JSONParser(json);
+        //listy = parser.forecastEntryList();
+        //System.out.println(listy.size() + "---------");
+       delegate.processFinish(json);
     }
 
     private String getUrl() {
@@ -68,7 +71,7 @@ public class MarkerTask extends AsyncTask<Void, Void, String> {
         googlePlacesUrl.append("&radius=" + 5000);
         googlePlacesUrl.append("&keyword=" + "food");
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyAur5sNgpt2bxCixYQZc0a62YwNkgnvx6Y");
+        googlePlacesUrl.append("&key=" + SERVICE_URL);
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
