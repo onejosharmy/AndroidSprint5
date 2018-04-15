@@ -29,7 +29,7 @@ public class MarkerTask extends AsyncTask<String, Void, String> {
         final StringBuilder json = new StringBuilder();
         try {
             // Connect to the web service
-            URL url = new URL(args.toString());
+            URL url = new URL(args[0]);
             conn = (HttpURLConnection) url.openConnection();
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
 
