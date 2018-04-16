@@ -17,11 +17,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+
 import java.util.List;
 
 public class MapsMarkerActivity extends ListActivity
@@ -37,6 +40,7 @@ public class MapsMarkerActivity extends ListActivity
     List<Entry> listForView;
     EntryAdapter adapter;
     EditText input;
+    Button find;
     //final int TIMEOUT = 240;
 
     @Override
@@ -63,24 +67,30 @@ public class MapsMarkerActivity extends ListActivity
         listview = (ListView) findViewById(android.R.id.list);
         input = (EditText) findViewById(R.id.editText);
         ImageView img = (ImageView) findViewById(R.id.button);
+       // img.setOnClickListener((OnClickListener)this);
 
-        this.markerTask.delegate = this;
+        //this.markerTask.delegate = this;
+
+/**
+        public void onClick (View view){
+            // String inputText = input.getText().toString();
+            // System.out.println(inputText);
+            //String searchURL = getUrl(lat, lon, inputText);
+            //fetcher = new ThreadFetcher(searchURL);
+            //fetcher.start();
+            listview.setAdapter(null);
+            // handler = new Handler();
+            // handler.post(checkFetcher);
+        }**/
+
+
+
+    }
+
+    public void onClick(View view){
         String inputText = input.getText().toString();
         this.markerTask.execute(getUrl(lat, lon, inputText));
-
-        img.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String inputText = input.getText().toString();
-                System.out.println(inputText);
-                String searchURL = getUrl(lat, lon, inputText);
-                //fetcher = new ThreadFetcher(searchURL);
-                //fetcher.start();
-                listview.setAdapter(null);
-                //handler = new Handler();
-                //handler.post(checkFetcher);
-            }
-        });
-
+        listview.setAdapter(null);
         displayEntries(this.markerTask.getListy());
         listForView = this.markerTask.getListy();
 
@@ -88,45 +98,40 @@ public class MapsMarkerActivity extends ListActivity
     }
 
     @Override
-    public void processFinish(String output) {
-
-        JSONParser parser = new JSONParser(output);
-        //System.out.println(fetcher.getResult());
-        List<Entry> listy = parser.forecastEntryList();
-        displayEntries(listy);
-        listForView = listy;
+    public String processFinish(String output) {
+        return output;
     }
 
-/**
-    Runnable checkFetcher = new Runnable() {
-        int count = 0;
-
-        public void run() {
-            if (fetcher.isFinished()) {
-                if (fetcher.successful()) {
-                    JSONParser parser = new JSONParser(fetcher.getResult());
-                    System.out.println(fetcher.getResult());
-                    List<Entry> listy = parser.forecastEntryList();
-                    displayEntries(listy);
-                    listForView = listy;
-                } else {
-                    System.out.println("fail");
-                    listview.setAdapter(null);
-                    listForView = null;
-                }
-
-            } else {
-                System.out.println("fetching");
-                count++;
-                if (count < TIMEOUT) {
-                    handler.postDelayed(checkFetcher, 1000);
-                } else {
-                    listview.setAdapter(null);
-                }
-            }
-        }
-    };
-**/
+    /**
+     * Runnable checkFetcher = new Runnable() {
+     * int count = 0;
+     * <p>
+     * public void run() {
+     * if (fetcher.isFinished()) {
+     * if (fetcher.successful()) {
+     * JSONParser parser = new JSONParser(fetcher.getResult());
+     * System.out.println(fetcher.getResult());
+     * List<Entry> listy = parser.forecastEntryList();
+     * displayEntries(listy);
+     * listForView = listy;
+     * } else {
+     * System.out.println("fail");
+     * listview.setAdapter(null);
+     * listForView = null;
+     * }
+     * <p>
+     * } else {
+     * System.out.println("fetching");
+     * count++;
+     * if (count < TIMEOUT) {
+     * handler.postDelayed(checkFetcher, 1000);
+     * } else {
+     * listview.setAdapter(null);
+     * }
+     * }
+     * }
+     * };
+     **/
     private void permissionRequester(String resource) {
 
         int result = ContextCompat.checkSelfPermission(this, resource);
