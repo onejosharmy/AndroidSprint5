@@ -28,7 +28,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import java.util.List;
 
 public class MapsMarkerActivity extends ListActivity
-        implements OnMapReadyCallback, AsyncResponse {
+        implements OnMapReadyCallback, View.OnClickListener {
     double lat = 33.575;
     double lon = -85.098;
     //int REQUEST_PLACE_PICKER = 1;
@@ -40,7 +40,6 @@ public class MapsMarkerActivity extends ListActivity
     List<Entry> listForView;
     EntryAdapter adapter;
     EditText input;
-    Button find;
     //final int TIMEOUT = 240;
 
     @Override
@@ -67,27 +66,26 @@ public class MapsMarkerActivity extends ListActivity
         listview = (ListView) findViewById(android.R.id.list);
         input = (EditText) findViewById(R.id.editText);
         ImageView img = (ImageView) findViewById(R.id.button);
-       // img.setOnClickListener((OnClickListener)this);
+        img.setOnClickListener(this);
 
         //this.markerTask.delegate = this;
 
 /**
-        public void onClick (View view){
-            // String inputText = input.getText().toString();
-            // System.out.println(inputText);
-            //String searchURL = getUrl(lat, lon, inputText);
-            //fetcher = new ThreadFetcher(searchURL);
-            //fetcher.start();
-            listview.setAdapter(null);
-            // handler = new Handler();
-            // handler.post(checkFetcher);
-        }**/
-
+ public void onClick (View view){
+ // String inputText = input.getText().toString();
+ // System.out.println(inputText);
+ //String searchURL = getUrl(lat, lon, inputText);
+ //fetcher = new ThreadFetcher(searchURL);
+ //fetcher.start();
+ listview.setAdapter(null);
+ // handler = new Handler();
+ // handler.post(checkFetcher);
+ }**/
 
 
     }
 
-    public void onClick(View view){
+    public void onClick(View view) {
         String inputText = input.getText().toString();
         this.markerTask.execute(getUrl(lat, lon, inputText));
         listview.setAdapter(null);
@@ -97,10 +95,10 @@ public class MapsMarkerActivity extends ListActivity
         registerForContextMenu(listview);
     }
 
-    @Override
-    public String processFinish(String output) {
-        return output;
-    }
+    //@Override
+    //public String processFinish(String output) {
+   //     return output;
+   // }
 
     /**
      * Runnable checkFetcher = new Runnable() {
